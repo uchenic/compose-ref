@@ -23,6 +23,11 @@ build: ## Build compose-ref binary
 	@mkdir -p bin/
 	GOFLAGS=$(GOFLAGS) go build -o bin/compose-ref compose-ref.go
 
+.PHONY: lib
+lib: ## Build compose-ref binary
+	@mkdir -p lib/
+	GOFLAGS=$(GOFLAGS) go build -o lib/libparse.so -buildmode=c-shared compose-parse.go
+
 .PHONY: test
 test: ## Run tests
 	GOFLAGS=$(GOFLAGS) go test ./... -v
