@@ -1,3 +1,6 @@
 compose.yaml
 compose-ref
 lib/*
+build
+dist
+ComposeParser.egg-info
