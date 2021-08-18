@@ -20,7 +20,10 @@ class ComposeParser(object):
         d = self.path.encode('utf-8')
         s.p = ctypes.c_char_p(d)
         s.n = ctypes.c_int(len(d))
-        return json.loads(self.lib.load(s).decode('utf-8'))
+        result = json.loads(self.lib.load(s).decode('utf-8'))
+        if "error" in result.keys():
+            raise Exception(result)
+        return result
 
 def main():
     q = './docker-compose.yml'

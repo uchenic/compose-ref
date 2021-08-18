@@ -20,7 +20,7 @@ import (
 
     "io/ioutil"
     "C"
-
+    "encoding/json"
     "github.com/compose-spec/compose-go/loader"
     compose "github.com/compose-spec/compose-go/types"
 )
@@ -42,15 +42,21 @@ func load(file string) *C.char {
         ConfigFiles: files,
     })
     if err != nil {
-        return nil
+        m := map[string]string{
+            "error": err.Error(),
+        }
+        enc, _ := json.Marshal(m)
+        return C.CString(string(enc))
     }
-    enc, err := c.MarshalJSON()
+    enc, err := json.Marshal(c)
      if err != nil {
-        return nil
+         m := map[string]string{
+            "error": err.Error(),
+        }
+        enc, _ := json.Marshal(m)
+        return C.CString(string(enc))
     }
-    var l string
-    l = string(enc)
-    return C.CString(l)
+    return C.CString(string(enc))
 }
 
 func main() {}

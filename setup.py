@@ -23,7 +23,7 @@ class build_py(_build_py):
         super(build_py, self).run()
 
 setup(name='ComposeParser',
-      version='0.0.3',
+      version='0.0.4',
       description='Docker Compose Parser',
       author='Uchenic',
       author_email='uchenic@protonmail.com',
