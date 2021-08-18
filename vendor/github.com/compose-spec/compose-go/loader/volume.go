@@ -1,3 +1,19 @@
+/*
+   Copyright 2020 The Compose Specification Authors.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
 package loader
 
 import (
@@ -103,18 +119,26 @@ func isBindOption(option string) bool {
 }
 
 func populateType(volume *types.ServiceVolumeConfig) {
-	switch {
-	// Anonymous volume
-	case volume.Source == "":
-		volume.Type = string(types.VolumeTypeVolume)
-	case isFilePath(volume.Source):
-		volume.Type = string(types.VolumeTypeBind)
-	default:
-		volume.Type = string(types.VolumeTypeVolume)
+	if isFilePath(volume.Source) {
+		volume.Type = types.VolumeTypeBind
+		if volume.Bind == nil {
+			volume.Bind = &types.ServiceVolumeBind{}
+		}
+		// For backward compatibility with docker-compose legacy, using short notation involves
+		// bind will create missing host path
+		volume.Bind.CreateHostPath = true
+	} else {
+		volume.Type = types.VolumeTypeVolume
+		if volume.Volume == nil {
+			volume.Volume = &types.ServiceVolumeVolume{}
+		}
 	}
 }
 
 func isFilePath(source string) bool {
+	if source == "" {
+		return false
+	}
 	switch source[0] {
 	case '.', '/', '~':
 		return true
